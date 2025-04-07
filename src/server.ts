@@ -1,0 +1,60 @@
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import { prisma } from './utils/prisma';
+import { corsOptions } from './utils/corsOptions';
+import { rateLimiter } from './utils/rateLimiter';
+import { logger } from './utils/logger';
+import router from './routes/routes';
+
+const app = express();
+
+// Middleware
+app.use(cors(corsOptions));
+app.use(helmet());
+app.use(
+  morgan('tiny', {
+    stream: { write: (message) => logger.info(message.trim()) },
+  })
+);
+app.use(rateLimiter);
+app.use(express.json());
+
+// Health Check Route
+app.get('/health', (req, res) => {
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+  });
+});
+
+app.use('/', router);
+
+// Graceful Shutdown
+const gracefulShutdown = async (
+  signal: string,
+  serverInstance: ReturnType<typeof app.listen>
+) => {
+  logger.info(`${signal} received. Shutting down gracefully.`);
+  serverInstance.close(async () => {
+    await prisma.$disconnect();
+    process.exit(0);
+  });
+
+  setTimeout(() => {
+    logger.error('Force shutting down after timeout.');
+    process.exit(1);
+  }, 10000);
+};
+
+const serverInstance = app.listen(3000, () => {
+  logger.info('Server is running on port 3000');
+});
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM', serverInstance));
+process.on('SIGINT', () => gracefulShutdown('SIGINT', serverInstance));
+
+const server = app;
+
+export { app, server };

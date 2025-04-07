@@ -1,0 +1,36 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  // Add previewFeatures for additional optimizations
+  previewFeatures = ["fullTextSearch", "mongoDb"]
+}
+
+enum UserRole {
+  ADMIN
+  STUDENT
+  EXECUTION_MENTOR
+  EXPERT_MENTOR
+  CONSULTANT
+}
+
+model Organisation {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name  String @unique
+  email String @unique
+
+  users User[] @relation("OrganisationUsers")
+}
+
+model User {
+  id    String   @id @default(auto()) @map("_id") @db.ObjectId
+  email String   @unique
+  name  String?
+  role  UserRole
+
+  organisationId String?       @db.ObjectId
+  organisation   Organisation? @relation(fields: [organisationId], references: [id], name: "OrganisationUsers")
+}
