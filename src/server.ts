@@ -8,6 +8,8 @@ import { rateLimiter } from './utils/rateLimiter';
 import { logger } from './utils/logger';
 import router from './routes/routes';
 
+const PORT = process.env.PORT || 5001;
+
 const app = express();
 
 // Middleware
@@ -48,8 +50,8 @@ const gracefulShutdown = async (
   }, 10000);
 };
 
-const serverInstance = app.listen(3000, () => {
-  logger.info('Server is running on port 3000');
+const serverInstance = app.listen(PORT, () => {
+  logger.info(`Server running on port ${PORT}`);
 });
 
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM', serverInstance));
