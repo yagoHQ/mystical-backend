@@ -5,32 +5,62 @@ datasource db {
 
 generator client {
   provider        = "prisma-client-js"
-  // Add previewFeatures for additional optimizations
   previewFeatures = ["fullTextSearch", "mongoDb"]
 }
 
 enum UserRole {
+  SUPER_ADMIN
   ADMIN
-  STUDENT
-  EXECUTION_MENTOR
-  EXPERT_MENTOR
-  CONSULTANT
-}
-
-model Organisation {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  name  String @unique
-  email String @unique
-
-  users User[] @relation("OrganisationUsers")
+  USER
 }
 
 model User {
-  id    String   @id @default(auto()) @map("_id") @db.ObjectId
-  email String   @unique
-  name  String?
-  role  UserRole
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  email     String    @unique
+  name      String?
+  role      UserRole  @default(USER)
+  scans     ScanEnv[] @relation("ScannedBy")
+  markings  Marking[]
+  comments  Comment[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
 
-  organisationId String?       @db.ObjectId
-  organisation   Organisation? @relation(fields: [organisationId], references: [id], name: "OrganisationUsers")
+model ScanEnv {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  fileUrl     String
+  description String?
+  location    String?
+  scannedBy   User      @relation("ScannedBy", fields: [scannedById], references: [id])
+  scannedById String    @db.ObjectId
+  markings    Marking[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Marking {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  scanEnv     ScanEnv   @relation(fields: [scanEnvId], references: [id])
+  scanEnvId   String    @db.ObjectId
+  createdBy   User      @relation(fields: [createdById], references: [id])
+  createdById String    @db.ObjectId
+  x           Float
+  y           Float
+  z           Float
+  url         String?
+  metadata    Json?
+  remark      String?
+  comments    Comment[]
+  createdAt   DateTime  @default(now())
+}
+
+model Comment {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  marking   Marking  @relation(fields: [markingId], references: [id])
+  markingId String   @db.ObjectId
+  createdAt DateTime @default(now())
 }
