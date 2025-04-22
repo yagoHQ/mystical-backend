@@ -1,8 +1,10 @@
 import express from 'express';
-import statusController from '../controllers/status/status';
+import environmentRouter from './environment.route'
+import scanRouter from './scan.route';
 
 const router = express.Router();
 
-router.get('/status', statusController.status);
+router.use('/api/environments', environmentRouter);
+router.use('/api/scans', scanRouter);
 
 export default router;

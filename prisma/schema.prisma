@@ -15,23 +15,23 @@ enum UserRole {
 }
 
 model User {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  email     String    @unique
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  email     String        @unique
   name      String?
-  role      UserRole  @default(USER)
-  scans     ScanEnv[] @relation("ScannedBy")
+  role      UserRole      @default(USER)
+  scans     Environment[] @relation("ScannedBy")
   markings  Marking[]
   comments  Comment[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 }
 
-model ScanEnv {
+model Environment {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
   title       String
-  fileUrl     String
   description String?
   location    String?
+  scans       Scan[]    @relation("EnvironmentScans") 
   scannedBy   User      @relation("ScannedBy", fields: [scannedById], references: [id])
   scannedById String    @db.ObjectId
   markings    Marking[]
@@ -39,20 +39,33 @@ model ScanEnv {
   updatedAt   DateTime  @updatedAt
 }
 
+model Scan {
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  scanName      String
+  fileUrl       String
+  originX       Float
+  originY       Float
+  originZ       Float
+  environment   Environment @relation("EnvironmentScans", fields: [environmentId], references: [id]) // ✅ same name
+  environmentId String      @db.ObjectId
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
 model Marking {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  scanEnv     ScanEnv   @relation(fields: [scanEnvId], references: [id])
-  scanEnvId   String    @db.ObjectId
-  createdBy   User      @relation(fields: [createdById], references: [id])
-  createdById String    @db.ObjectId
-  x           Float
-  y           Float
-  z           Float
-  url         String?
-  metadata    Json?
-  remark      String?
-  comments    Comment[]
-  createdAt   DateTime  @default(now())
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  environment   Environment @relation(fields: [environmentId], references: [id])
+  environmentId String      @db.ObjectId
+  createdBy     User        @relation(fields: [createdById], references: [id])
+  createdById   String      @db.ObjectId
+  x             Float
+  y             Float
+  z             Float
+  url           String?
+  metadata      Json?
+  remark        String?
+  comments      Comment[]
+  createdAt     DateTime    @default(now())
 }
 
 model Comment {

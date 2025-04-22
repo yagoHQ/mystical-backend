@@ -3,10 +3,13 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { prisma } from './utils/prisma';
+import dotenv from 'dotenv';
 import { corsOptions } from './utils/corsOptions';
 import { rateLimiter } from './utils/rateLimiter';
 import { logger } from './utils/logger';
 import router from './routes/routes';
+
+dotenv.config();
 
 const PORT = process.env.PORT || 5001;
 
