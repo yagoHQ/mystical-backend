@@ -15,4 +15,4 @@ export const getAllEnvironments = async (_req: Request, res: Response) => {
     console.error('[getAllEnvironments]', error);
     res.status(500).json({ error: 'Failed to fetch environments' });
   }
-};    
+};       
