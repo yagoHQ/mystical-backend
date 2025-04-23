@@ -5,8 +5,8 @@ export const getAllEnvironments = async (_req: Request, res: Response) => {
   try {
     const environments = await prisma.environment.findMany({
       include: {
-        scans: true,      
-        scannedBy: true,  
+        scans: true,
+        scannedBy: true,
       },
     });
 
@@ -15,4 +15,4 @@ export const getAllEnvironments = async (_req: Request, res: Response) => {
     console.error('[getAllEnvironments]', error);
     res.status(500).json({ error: 'Failed to fetch environments' });
   }
-};
+};    

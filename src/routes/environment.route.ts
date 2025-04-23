@@ -1,6 +1,6 @@
-import {Router} from 'express';
+import { Router } from 'express';
 import { Request, Response } from 'express';
-import {createEnvironment} from '../controllers/environment/createEnvironment.controller';
+import { createEnvironment } from '../controllers/environment/createEnvironment.controller';
 import { getAllEnvironments } from '../controllers/environment/getAllEnvironments.controller';
 import { createMarking } from '../controllers/marking/createMarking.controller';
 import { getEnvironmentMarkings } from '../controllers/marking/getEnvironmentMarkings.controller';
@@ -14,6 +14,6 @@ router.get('/', getAllEnvironments);
 router.post('/addMarking', createMarking);
 router.get('/:id/markings', getEnvironmentMarkings);
 router.put('/:id', updateMarking);
-router.get('/:id', getEnvironmentById); 
+router.get('/:id', getEnvironmentById);
 
 export default router;
