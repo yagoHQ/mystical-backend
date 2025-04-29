@@ -7,13 +7,19 @@ import { createMarking } from '../controllers/marking/createMarking.controller';
 import { getEnvironmentMarkings } from '../controllers/marking/getEnvironmentMarkings.controller';
 import { updateMarking } from '../controllers/marking/updateMarking.controller';
 import { getEnvironmentById } from '../controllers/environment/getEnvironmentById.controller';
+import { authenticate } from '../middlewares/auth.middleware';
 
 const router = Router();
 
-router.post('/createEnvironment', createEnvironment);
-router.get('/', getAllEnvironments);
+// Public routes
 router.post('/login', loginUser);
 router.post('/createUser', createUser);
+
+// Everything below requires a valid JWT
+router.use(authenticate);
+
+router.get('/', getAllEnvironments);
+router.post('/createEnvironment', createEnvironment);
 router.post('/addMarking', createMarking);
 router.get('/:id/markings', getEnvironmentMarkings);
 router.put('/:id', updateMarking);
