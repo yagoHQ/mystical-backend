@@ -11,10 +11,6 @@ import { authenticate } from '../middlewares/auth.middleware';
 
 const router = Router();
 
-// Public routes
-router.post('/login', loginUser);
-router.post('/createUser', createUser);
-
 // Everything below requires a valid JWT
 router.use(authenticate);
 
