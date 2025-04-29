@@ -1,4 +1,4 @@
-const allowedOrigins = ['http://yourfrontend.com', 'http://anothertrusted.com'];
+const allowedOrigins = ['http://localhost:5173', 'https://example.com'];
 
 interface CorsOptions {
   origin: (
