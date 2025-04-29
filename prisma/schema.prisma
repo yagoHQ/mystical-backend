@@ -18,6 +18,7 @@ model User {
   id        String        @id @default(auto()) @map("_id") @db.ObjectId
   email     String        @unique
   name      String?
+  password  String?
   role      UserRole      @default(USER)
   scans     Environment[] @relation("ScannedBy")
   markings  Marking[]
@@ -31,7 +32,7 @@ model Environment {
   title       String
   description String?
   location    String?
-  scans       Scan[]    @relation("EnvironmentScans") 
+  scans       Scan[]    @relation("EnvironmentScans")
   scannedBy   User      @relation("ScannedBy", fields: [scannedById], references: [id])
   scannedById String    @db.ObjectId
   markings    Marking[]
