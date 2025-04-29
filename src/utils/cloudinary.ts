@@ -7,7 +7,10 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET!,
 });
 
-export const uploadStreamToCloudinary = (buffer: Buffer, folder: string): Promise<string> => {
+export const uploadStreamToCloudinary = (
+  buffer: Buffer,
+  folder: string
+): Promise<string> => {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
@@ -20,7 +23,7 @@ export const uploadStreamToCloudinary = (buffer: Buffer, folder: string): Promis
         } else {
           resolve(result?.secure_url || '');
         }
-      },
+      }
     );
 
     Readable.from(buffer).pipe(stream);

@@ -14,8 +14,8 @@ export const getEnvironmentMarkings = async (req: Request, res: Response) => {
         environmentId,
       },
       include: {
-        createdBy: true,     
-        comments: true, 
+        createdBy: true,
+        comments: true,
       },
     });
 

@@ -34,6 +34,8 @@ export const getEnvironmentById = async (req: Request, res: Response) => {
     return res.json(environment);
   } catch (error) {
     console.error('[getEnvironmentById]', error);
-    return res.status(500).json({ error: 'Failed to fetch environment details' });
+    return res
+      .status(500)
+      .json({ error: 'Failed to fetch environment details' });
   }
 };

@@ -3,20 +3,15 @@ import { prisma } from '../../utils/prisma';
 
 export const createMarking = async (req: Request, res: Response) => {
   try {
-    const {
-      x,
-      y,
-      z,
-      environmentId,
-      createdById,
-      remark,
-      metadata,
-      url,
-    } = req.body;
+    const { x, y, z, environmentId, createdById, remark, metadata, url } =
+      req.body;
 
     if (
-      x === undefined || y === undefined || z === undefined ||
-      !environmentId || !createdById
+      x === undefined ||
+      y === undefined ||
+      z === undefined ||
+      !environmentId ||
+      !createdById
     ) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
