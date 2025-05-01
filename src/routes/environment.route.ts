@@ -9,14 +9,11 @@ import { authenticate } from '../middlewares/auth.middleware';
 
 const router = Router();
 
-// Everything below requires a valid JWT
-router.use(authenticate);
-
 router.get('/', getAllEnvironments);
 router.post('/createEnvironment', createEnvironment);
-router.post('/addMarking', createMarking);
+router.post('/addMarking',authenticate, createMarking);
 router.get('/:id/markings', getEnvironmentMarkings);
-router.put('/:id', updateMarking);
+router.put('/:id',authenticate, updateMarking);
 router.get('/:id', getEnvironmentById);
 
 export default router;
