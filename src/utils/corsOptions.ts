@@ -1,4 +1,4 @@
-const allowedOrigins = ['http://localhost:5173', 'https://example.com'];
+const allowedOrigins = ['http://localhost:5173', 'https://mysticalfe.vercel.app'];
 
 interface CorsOptions {
   origin: (
