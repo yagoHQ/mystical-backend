@@ -35,3 +35,22 @@ export const createMarking = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Failed to add marking' });
   }
 };
+
+export const deleteMarking = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const marking = await prisma.marking.delete({
+      where: { id },
+    });
+
+    return res.status(200).json(marking);
+  } catch (error) {
+    console.error('[deleteMarking]', error);
+    return res.status(500).json({ error: 'Failed to delete marking' });
+  }
+};
