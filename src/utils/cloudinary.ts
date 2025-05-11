@@ -14,8 +14,7 @@ export const uploadStreamToCloudinary = (
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
       {
-        resource_type: 'raw', // allows .glb, .gltf, .zip, etc.
-        folder,
+        resource_type: 'raw', 
       },
       (error, result) => {
         if (error) {
