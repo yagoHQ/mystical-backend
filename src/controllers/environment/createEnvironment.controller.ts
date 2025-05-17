@@ -35,3 +35,38 @@ export const createEnvironment = async (req: Request, res: Response) => {
     return;
   }
 };
+
+export const bulkUpdateScans = async (req: Request, res: Response) => {
+  try {
+    const { scans } = req.body;
+
+    if (!Array.isArray(scans) || scans.length === 0) {
+      return res.status(400).json({ error: 'Scans array is required' });
+    }
+
+    const updateResults = await Promise.allSettled(
+      scans.map((scan) => {
+        const { id, position, rotations, scale } = scan;
+        return prisma.scan.update({
+          where: { id },
+          data: { position, rotations, scale },
+        });
+      })
+    );
+
+    const successful = updateResults
+      .filter((r) => r.status === 'fulfilled')
+      .map((r) => (r as PromiseFulfilledResult<any>).value);
+    const failed = updateResults.filter((r) => r.status === 'rejected');
+
+    return res.status(200).json({
+      message: 'Bulk scan update completed',
+      updated: successful.length,
+      failed: failed.length,
+      scans: successful,
+    });
+  } catch (error) {
+    console.error('[bulkUpdateScans]', error);
+    return res.status(500).json({ error: 'Failed to update scans' });
+  }
+};

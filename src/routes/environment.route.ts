@@ -1,5 +1,8 @@
 import { Router } from 'express';
-import { createEnvironment } from '../controllers/environment/createEnvironment.controller';
+import {
+  createEnvironment,
+  bulkUpdateScans,
+} from '../controllers/environment/createEnvironment.controller';
 import { getAllEnvironments } from '../controllers/environment/getAllEnvironments.controller';
 import {
   createMarking,
@@ -15,6 +18,7 @@ const router = Router();
 
 router.get('/', getAllEnvironments);
 router.post('/createEnvironment', upload.single('image'), createEnvironment);
+router.post('/updateScans', bulkUpdateScans);
 router.post('/addMarking', createMarking);
 router.delete('/deleteMarking/:id', deleteMarking);
 router.get('/:id/markings', getEnvironmentMarkings);
