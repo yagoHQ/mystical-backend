@@ -6,7 +6,13 @@ export const getAllEnvironments = async (_req: Request, res: Response) => {
     const environments = await prisma.environment.findMany({
       include: {
         scans: true,
-        scannedBy: true,
+        scannedBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
     });
 

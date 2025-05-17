@@ -9,11 +9,12 @@ import { getEnvironmentMarkings } from '../controllers/marking/getEnvironmentMar
 import { updateMarking } from '../controllers/marking/updateMarking.controller';
 import { getEnvironmentById } from '../controllers/environment/getEnvironmentById.controller';
 import { authenticate } from '../middlewares/auth.middleware';
+import { upload } from '../middlewares/multer';
 
 const router = Router();
 
 router.get('/', getAllEnvironments);
-router.post('/createEnvironment', createEnvironment);
+router.post('/createEnvironment', upload.single('image'), createEnvironment);
 router.post('/addMarking', createMarking);
 router.delete('/deleteMarking/:id', deleteMarking);
 router.get('/:id/markings', getEnvironmentMarkings);

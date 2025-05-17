@@ -4,8 +4,7 @@ datasource db {
 }
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch", "mongoDb"]
+  provider = "prisma-client-js"
 }
 
 enum UserRole {
@@ -30,44 +29,55 @@ model User {
 model Environment {
   id          String    @id @default(auto()) @map("_id") @db.ObjectId
   title       String
-  description String?
-  location    String?
+  location    String
+  image       String
+  isEditable  Boolean   @default(true)
   scans       Scan[]    @relation("EnvironmentScans")
-  scannedBy   User      @relation("ScannedBy", fields: [scannedById], references: [id])
-  scannedById String    @db.ObjectId
+ scannedBy   User?     @relation("ScannedBy", fields: [scannedById], references: [id])
+scannedById String?   @db.ObjectId
   markings    Marking[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
 
+
 model Scan {
   id            String      @id @default(auto()) @map("_id") @db.ObjectId
   scanName      String
+  images        String[]
   fileUrl       String
-  originX       Float
-  originY       Float
-  originZ       Float
-  environment   Environment @relation("EnvironmentScans", fields: [environmentId], references: [id]) // ✅ same name
+  originX       Float?
+  originY       Float?
+  originZ       Float?
+  position      Float[]
+  rotations     Float[]
+  scale         Float[]
+  environment   Environment @relation("EnvironmentScans", fields: [environmentId], references: [id])
   environmentId String      @db.ObjectId
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 }
 
+
+
 model Marking {
-  id            String      @id @default(auto()) @map("_id") @db.ObjectId
-  environment   Environment @relation(fields: [environmentId], references: [id])
-  environmentId String      @db.ObjectId
-  createdBy     User        @relation(fields: [createdById], references: [id])
-  createdById   String      @db.ObjectId
-  x             Float
-  y             Float
-  z             Float
-  url           String?
-  metadata      Json?
-  remark        String?
-  comments      Comment[]
-  createdAt     DateTime    @default(now())
+  id                  String      @id @default(auto()) @map("_id") @db.ObjectId
+  environment         Environment @relation(fields: [environmentId], references: [id])
+  environmentId       String      @db.ObjectId
+  createdBy           User        @relation(fields: [createdById], references: [id])
+  createdById         String      @db.ObjectId
+  x                   Float
+  y                   Float
+  z                   Float
+  modelMarking        Float[]
+  environmentMarking  Float[]
+  url                 String?
+  metadata            Json?
+  remark              String?
+  comments            Comment[]
+  createdAt           DateTime    @default(now())
 }
+
 
 model Comment {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
