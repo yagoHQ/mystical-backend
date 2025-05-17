@@ -40,10 +40,7 @@ export const uploadScan = async (req: Request, res: Response) => {
         scanName,
         fileUrl,
         images: imageUrls,
-        originX: parseFloat(originX || '0'),
-        originY: parseFloat(originY || '0'),
-        originZ: parseFloat(originZ || '0'),
-        position: [0, 0, 0],
+        position: [originX || 0, originY || 0, originZ || 0],
         rotations: [],
         scale: [],
         environment: {

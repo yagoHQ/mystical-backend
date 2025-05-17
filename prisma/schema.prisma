@@ -46,11 +46,8 @@ model Scan {
   scanName      String
   images        String[]
   fileUrl       String
-  originX       Float?
-  originY       Float?
-  originZ       Float?
   position      Float[]
-  rotations     Float[]
+  rotation     Float[]
   scale         Float[]
   environment   Environment @relation("EnvironmentScans", fields: [environmentId], references: [id])
   environmentId String      @db.ObjectId

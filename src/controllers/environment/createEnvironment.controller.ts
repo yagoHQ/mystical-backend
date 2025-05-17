@@ -46,10 +46,10 @@ export const bulkUpdateScans = async (req: Request, res: Response) => {
 
     const updateResults = await Promise.allSettled(
       scans.map((scan) => {
-        const { id, position, rotations, scale } = scan;
+        const { id, position, rotation, scale } = scan;
         return prisma.scan.update({
           where: { id },
-          data: { position, rotations, scale },
+          data: { position, rotation, scale },
         });
       })
     );
