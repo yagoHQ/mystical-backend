@@ -38,7 +38,7 @@ export const createEnvironment = async (req: Request, res: Response) => {
 
 export const bulkUpdateScans = async (req: Request, res: Response) => {
   try {
-    const { scans } = req.body;
+    const { scans, id } = req.body;
 
     if (!Array.isArray(scans) || scans.length === 0) {
       return res.status(400).json({ error: 'Scans array is required' });
@@ -53,6 +53,11 @@ export const bulkUpdateScans = async (req: Request, res: Response) => {
         });
       })
     );
+
+    const updatedEnvironment = await prisma.environment.update({
+      where: { id: id },
+      data: { isEditable: false },
+    });
 
     const successful = updateResults
       .filter((r) => r.status === 'fulfilled')
