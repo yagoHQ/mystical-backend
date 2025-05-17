@@ -1,11 +1,17 @@
-const allowedOrigins = ['http://localhost:5173', 'https://mysticalfe.vercel.app'];
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://mysticalfe.vercel.app',
+];
 
 interface CorsOptions {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow: boolean) => void) => void;
+  origin: (
+    origin: string | undefined,
+    callback: (err: Error | null, allow: boolean) => void
+  ) => void;
   methods: string[];
   allowedHeaders: string[];
   credentials: boolean; // Allow credentials (cookies, authorization headers, etc.)
-} 
+}
 
 const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
@@ -17,10 +23,9 @@ const corsOptions: CorsOptions = {
       callback(new Error(`CORS blocked: ${origin}`), false);
     }
   },
-  methods: ['GET', 'POST', 'PUT', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'OPTIONS', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 };
 
 export { corsOptions };
-
