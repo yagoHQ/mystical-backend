@@ -41,7 +41,7 @@ export const uploadScan = async (req: Request, res: Response) => {
         fileUrl,
         images: imageUrls,
         position: [originX || 0, originY || 0, originZ || 0],
-        rotations: [],
+        rotation: [],
         scale: [],
         environment: {
           connect: { id: environmentId },
