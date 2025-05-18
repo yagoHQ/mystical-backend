@@ -54,3 +54,28 @@ export const deleteMarking = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Failed to delete marking' });
   }
 };
+
+export const getMarkingById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({ error: 'Missing markingId' });
+  }
+
+  try {
+    const markings = await prisma.marking.findMany({
+      where: {
+        id,
+      },
+      include: {
+        createdBy: true,
+        comments: true,
+      },
+    });
+
+    res.json(markings);
+  } catch (error) {
+    console.error('[getEnvironmentMarkings]', error);
+    res.status(500).json({ error: 'Failed to fetch markings' });
+  }
+};

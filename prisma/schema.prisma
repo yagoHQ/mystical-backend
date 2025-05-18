@@ -33,6 +33,8 @@ model Environment {
   image       String
   isEditable  Boolean   @default(true)
   scans       Scan[]    @relation("EnvironmentScans")
+  originPosition      Float[]?
+  originRotation      Float[]?
  scannedBy   User?     @relation("ScannedBy", fields: [scannedById], references: [id])
 scannedById String?   @db.ObjectId
   markings    Marking[]
