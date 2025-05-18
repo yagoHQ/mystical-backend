@@ -21,7 +21,7 @@ router.post('/createEnvironment', upload.single('image'), createEnvironment);
 router.post('/updateScans', bulkUpdateScans);
 router.post('/addMarking', createMarking);
 router.delete('/deleteMarking/:id', deleteMarking);
-router.get('/:id/markings', getEnvironmentMarkings);
+router.get('/markings/:id', getEnvironmentMarkings);
 router.put('/:id', authenticate, updateMarking);
 router.get('/:id', getEnvironmentById);
 
