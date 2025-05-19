@@ -1,6 +1,7 @@
 const allowedOrigins = [
   'http://localhost:5173',
   'https://mysticalfe.vercel.app',
+  'https://questdemo.vercel.app',
 ];
 
 interface CorsOptions {
