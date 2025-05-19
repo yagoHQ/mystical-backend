@@ -22,7 +22,7 @@ router.post('/updateScans', bulkUpdateScans);
 router.post('/addMarking', createMarking);
 router.delete('/deleteMarking/:id', deleteMarking);
 router.get('/markings/:id', getMarkingById);
-router.put('/:id', authenticate, updateMarking);
+router.put('/:id', updateMarking);
 router.get('/:id', getEnvironmentById);
 
 export default router;
