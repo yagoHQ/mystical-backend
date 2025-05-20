@@ -69,7 +69,11 @@ export const getMarkingById = async (req: Request, res: Response) => {
       },
       include: {
         createdBy: true,
-        comments: true,
+        comments: {
+          include: {
+            user: true,
+          },
+        },
       },
     });
 
