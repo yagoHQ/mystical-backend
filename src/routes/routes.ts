@@ -9,6 +9,6 @@ const router = express.Router();
 router.use('/api/environments', environmentRouter);
 router.use('/api/scans', scanRouter);
 router.use('/api/auth', authRouter);
-router.use('/api/commments', commentRouter);
+router.use('/api/comments', commentRouter);
 
 export default router;
