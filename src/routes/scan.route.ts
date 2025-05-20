@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { upload } from '../middlewares/multer';
+import { upload } from '../middlewares/upload';
 import { uploadScan } from '../controllers/scan/uploadScan.controller';
 // import { getScanModelsById } from '../controllers/scan/uploadScan.controller';
 

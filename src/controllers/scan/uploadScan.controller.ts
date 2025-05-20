@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../utils/prisma';
-import { uploadStreamToCloudinary } from '../../utils/cloudinary';
+
+interface S3MulterFile extends Express.Multer.File {
+  location: string;
+}
 
 export const uploadScan = async (req: Request, res: Response) => {
   try {
@@ -11,27 +14,23 @@ export const uploadScan = async (req: Request, res: Response) => {
     }
 
     const files = req.files as {
-      file?: Express.Multer.File[];
-      images?: Express.Multer.File[];
+      file?: S3MulterFile[];
+      images?: S3MulterFile[];
     };
 
-    if (!files?.file?.[0]) {
+    const file = files?.file?.[0];
+    if (!file?.location) {
       return res.status(400).json({ error: '3D model file is required' });
     }
 
-    const fileUrl = await uploadStreamToCloudinary(
-      files.file[0].buffer,
-      'scans'
-    );
+    const fileUrl = file.location;
 
     const imageUrls: string[] = [];
-    if (files.images) {
+    if (files.images?.length) {
       for (const img of files.images) {
-        const imageUrl = await uploadStreamToCloudinary(
-          img.buffer,
-          'scan-images'
-        );
-        imageUrls.push(imageUrl);
+        if (img.location) {
+          imageUrls.push(img.location);
+        }
       }
     }
 
@@ -40,7 +39,11 @@ export const uploadScan = async (req: Request, res: Response) => {
         scanName,
         fileUrl,
         images: imageUrls,
-        position: [originX || 0, originY || 0, originZ || 0],
+        position: [
+          parseFloat(originX) || 0,
+          parseFloat(originY) || 0,
+          parseFloat(originZ) || 0,
+        ],
         rotation: [],
         scale: [],
         environment: {
