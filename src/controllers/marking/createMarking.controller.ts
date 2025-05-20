@@ -63,17 +63,26 @@ export const getMarkingById = async (req: Request, res: Response) => {
   }
 
   try {
-    const markings = await prisma.marking.findMany({
+    const marking = await prisma.marking.findUnique({
       where: {
         id,
       },
       include: {
+        environment: {
+          select: {
+            title: true,
+          },
+        },
         createdBy: true,
-        comments: true,
+        comments: {
+          include: {
+            user: true,
+          },
+        },
       },
     });
 
-    res.json(markings);
+    res.json(marking);
   } catch (error) {
     console.error('[getEnvironmentMarkings]', error);
     res.status(500).json({ error: 'Failed to fetch markings' });
