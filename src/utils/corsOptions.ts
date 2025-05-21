@@ -2,6 +2,7 @@ const allowedOrigins = [
   'http://localhost:5173',
   'https://mysticalfe.vercel.app',
   'https://questdemo.vercel.app',
+  'https://demo-zeta-two-26.vercel.app',
 ];
 
 interface CorsOptions {
