@@ -44,8 +44,8 @@ export const uploadScan = async (req: Request, res: Response) => {
           parseFloat(originY) || 0,
           parseFloat(originZ) || 0,
         ],
-        rotation: [],
-        scale: [],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1],
         environment: {
           connect: { id: environmentId },
         },
