@@ -22,3 +22,109 @@ export const getAllEnvironments = async (_req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to fetch environments' });
   }
 };
+
+export const getEnvironmentById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({ error: 'Environment ID is required' });
+  }
+
+  try {
+    const environment = await prisma.environment.findUnique({
+      where: { id },
+      include: {
+        scannedBy: true,
+        scans: true,
+        markings: {
+          include: {
+            createdBy: true,
+            comments: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!environment) {
+      return res.status(404).json({ error: 'Environment not found' });
+    }
+
+    return res.json(environment);
+  } catch (error) {
+    console.error('[getEnvironmentById]', error);
+    return res
+      .status(500)
+      .json({ error: 'Failed to fetch environment details' });
+  }
+};
+
+export const getDashboardData = async (_req: Request, res: Response) => {
+  try {
+    const [
+      areaScanned,
+      totalUsers,
+      totalMarkings,
+      totalSuggestions,
+      recentAreas,
+      recentSuggestions,
+      recentMarkingsRaw,
+    ] = await Promise.all([
+      prisma.environment.count(),
+      prisma.user.count(),
+      prisma.marking.count(),
+      prisma.comment.count(),
+      prisma.environment.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+        select: { id: true, title: true, location: true, createdAt: true },
+      }),
+      prisma.comment.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+        select: { id: true, markingId: true, createdAt: true },
+      }),
+      prisma.marking.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+        select: {
+          id: true,
+          createdAt: true,
+          remark: true,
+          environmentId: true,
+        },
+      }),
+    ]);
+
+    // Manually fetch environment titles for each recent marking
+    const recentMarkings = await Promise.all(
+      recentMarkingsRaw.map(async (marking) => {
+        const env = await prisma.environment.findUnique({
+          where: { id: marking.environmentId },
+          select: { title: true },
+        });
+
+        return {
+          ...marking,
+          environmentTitle: env?.title ?? 'Unknown',
+        };
+      })
+    );
+
+    res.status(200).json({
+      areaScanned,
+      totalUsers,
+      totalMarkings,
+      totalSuggestions,
+      recentAreas,
+      recentSuggestions,
+      recentMarkings,
+    });
+  } catch (error) {
+    console.error('[getDashboardData]', error);
+    res.status(500).json({ error: 'Failed to fetch dashboard data' });
+  }
+};

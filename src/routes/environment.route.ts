@@ -3,14 +3,17 @@ import {
   createEnvironment,
   bulkUpdateScans,
 } from '../controllers/environment/createEnvironment.controller';
-import { getAllEnvironments } from '../controllers/environment/getAllEnvironments.controller';
+import {
+  getAllEnvironments,
+  getEnvironmentById,
+  getDashboardData,
+} from '../controllers/environment/getAllEnvironments.controller';
 import {
   createMarking,
   deleteMarking,
   getMarkingById,
 } from '../controllers/marking/createMarking.controller';
 import { updateMarking } from '../controllers/marking/updateMarking.controller';
-import { getEnvironmentById } from '../controllers/environment/getEnvironmentById.controller';
 import { authenticate } from '../middlewares/auth.middleware';
 import { upload } from '../middlewares/multer';
 
@@ -24,5 +27,6 @@ router.delete('/deleteMarking/:id', deleteMarking);
 router.get('/markings/:id', getMarkingById);
 router.put('/:id', updateMarking);
 router.get('/:id', getEnvironmentById);
+router.get('/dashboard/getData', getDashboardData);
 
 export default router;
