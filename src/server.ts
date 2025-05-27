@@ -34,29 +34,9 @@ app.get('/health', (req, res) => {
 
 app.use('/', router);
 
-// Graceful Shutdown
-const gracefulShutdown = async (
-  signal: string,
-  serverInstance: ReturnType<typeof app.listen>
-) => {
-  logger.info(`${signal} received. Shutting down gracefully.`);
-  serverInstance.close(async () => {
-    await prisma.$disconnect();
-    process.exit(0);
-  });
-
-  setTimeout(() => {
-    logger.error('Force shutting down after timeout.');
-    process.exit(1);
-  }, 10000);
-};
-
 const serverInstance = app.listen(PORT, () => {
   logger.info(`Server running on port ${PORT}`);
 });
-
-process.on('SIGTERM', () => gracefulShutdown('SIGTERM', serverInstance));
-process.on('SIGINT', () => gracefulShutdown('SIGINT', serverInstance));
 
 const server = app;
 

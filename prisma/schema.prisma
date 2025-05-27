@@ -48,6 +48,8 @@ model Scan {
   scanName      String
   images        String[]
   fileUrl       String
+material   String?
+  textures      String[]
   position      Float[]
   rotation     Float[]
   scale         Float[]

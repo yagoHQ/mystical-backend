@@ -16,6 +16,8 @@ export const uploadScan = async (req: Request, res: Response) => {
     const files = req.files as {
       file?: S3MulterFile[];
       images?: S3MulterFile[];
+      material?: S3MulterFile[];
+      textures?: S3MulterFile[];
     };
 
     const file = files?.file?.[0];
@@ -23,7 +25,13 @@ export const uploadScan = async (req: Request, res: Response) => {
       return res.status(400).json({ error: '3D model file is required' });
     }
 
+    const material = files?.material?.[0];
+    if (!material?.location) {
+      return res.status(400).json({ error: 'Material file is required' });
+    }
+
     const fileUrl = file.location;
+    const materialUrl = material.location;
 
     const imageUrls: string[] = [];
     if (files.images?.length) {
@@ -34,11 +42,22 @@ export const uploadScan = async (req: Request, res: Response) => {
       }
     }
 
+    const textureUrls: string[] = [];
+    if (files.textures?.length) {
+      for (const tex of files.textures) {
+        if (tex.location) {
+          textureUrls.push(tex.location);
+        }
+      }
+    }
+
     const scan = await prisma.scan.create({
       data: {
         scanName,
         fileUrl,
+        material: materialUrl,
         images: imageUrls,
+        textures: textureUrls,
         position: [
           parseFloat(originX) || 0,
           parseFloat(originY) || 0,
