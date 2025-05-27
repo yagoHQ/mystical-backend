@@ -31,7 +31,7 @@ model Environment {
   title       String
   location    String
   image       String
-  isEditable  Boolean   @default(true)
+  isEditable  Boolean   @default(false)
   scans       Scan[]    @relation("EnvironmentScans")
 originPosition Float[] @default([])
 originRotation Float[] @default([])
