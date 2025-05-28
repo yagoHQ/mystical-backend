@@ -10,7 +10,7 @@ router.post(
     { name: 'file', maxCount: 1 },
     { name: 'images', maxCount: 120 },
     { name: 'material', maxCount: 1 },
-    { name: 'textures', maxCount: 200 },
+    { name: 'textures', maxCount: 2000 },
   ]),
   uploadScan
 );
