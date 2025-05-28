@@ -25,13 +25,10 @@ export const uploadScan = async (req: Request, res: Response) => {
       return res.status(400).json({ error: '3D model file is required' });
     }
 
-    const material = files?.material?.[0];
-    if (!material?.location) {
-      return res.status(400).json({ error: 'Material file is required' });
-    }
-
     const fileUrl = file.location;
-    const materialUrl = material.location;
+
+    const material = files?.material?.[0];
+    const materialUrl = material?.location || null; // optional
 
     const imageUrls: string[] = [];
     if (files.images?.length) {
@@ -57,7 +54,7 @@ export const uploadScan = async (req: Request, res: Response) => {
         fileUrl,
         material: materialUrl,
         images: imageUrls,
-        textures: textureUrls,
+        textures: textureUrls, // remains empty array if none provided
         position: [
           parseFloat(originX) || 0,
           parseFloat(originY) || 0,
