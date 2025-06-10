@@ -128,3 +128,50 @@ export const getDashboardData = async (_req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to fetch dashboard data' });
   }
 };
+
+export const addOrigin = async (_req: Request, res: Response) => {
+  try {
+    const {
+      environmentId,
+      positionX,
+      positionY,
+      positionZ,
+      rotationX,
+      rotationY,
+      rotationZ,
+    } = _req.body;
+
+    if (
+      !environmentId ||
+      !positionX ||
+      !positionY ||
+      !positionZ ||
+      !rotationX ||
+      !rotationY ||
+      !rotationZ
+    ) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const updatedEnvironment = await prisma.environment.update({
+      where: { id: environmentId },
+      data: {
+        originPosition: [
+          parseFloat(positionX),
+          parseFloat(positionY),
+          parseFloat(positionZ),
+        ],
+        originRotation: [
+          parseFloat(rotationX),
+          parseFloat(rotationY),
+          parseFloat(rotationZ),
+        ],
+      },
+    });
+
+    res.status(200).json(updatedEnvironment);
+  } catch (error) {
+    console.error('[addOrigin]', error);
+    res.status(500).json({ error: 'Failed to update origin in environment' });
+  }
+};

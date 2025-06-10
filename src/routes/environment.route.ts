@@ -7,6 +7,7 @@ import {
   getAllEnvironments,
   getEnvironmentById,
   getDashboardData,
+  addOrigin,
 } from '../controllers/environment/getAllEnvironments.controller';
 import {
   createMarking,
@@ -28,5 +29,6 @@ router.get('/markings/:id', getMarkingById);
 router.put('/:id', updateMarking);
 router.get('/:id', getEnvironmentById);
 router.get('/dashboard/getData', getDashboardData);
+router.post('/origin', addOrigin);
 
 export default router;
