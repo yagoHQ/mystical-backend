@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { prisma } from '../../utils/prisma';
+import { ObjectId } from 'mongodb';
 
 export const createMarking = async (req: Request, res: Response) => {
   try {
@@ -85,6 +86,46 @@ export const getMarkingById = async (req: Request, res: Response) => {
     res.json(marking);
   } catch (error) {
     console.error('[getEnvironmentMarkings]', error);
+    res.status(500).json({ error: 'Failed to fetch markings' });
+  }
+};
+
+export const getMarkingByEnvironmentId = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { environmentId } = req.params;
+
+    if (!environmentId) {
+      return res
+        .status(400)
+        .json({ error: 'Missing environmentId in request params' });
+    }
+
+    const markings = await prisma.marking.findMany({
+      where: { environmentId },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        envX: true,
+        envY: true,
+        envZ: true,
+        id: true,
+        remark: true,
+        url: true,
+        createdBy: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    res.status(200).json(markings);
+  } catch (error) {
+    console.error('[getMarkingByEnvironmentId]', error);
     res.status(500).json({ error: 'Failed to fetch markings' });
   }
 };

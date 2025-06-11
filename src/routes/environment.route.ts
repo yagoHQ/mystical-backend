@@ -8,11 +8,13 @@ import {
   getEnvironmentById,
   getDashboardData,
   addOrigin,
+  updateMarkingLocation,
 } from '../controllers/environment/getAllEnvironments.controller';
 import {
   createMarking,
   deleteMarking,
   getMarkingById,
+  getMarkingByEnvironmentId,
 } from '../controllers/marking/createMarking.controller';
 import { updateMarking } from '../controllers/marking/updateMarking.controller';
 import { authenticate } from '../middlewares/auth.middleware';
@@ -26,9 +28,11 @@ router.post('/updateScans', bulkUpdateScans);
 router.post('/addMarking', createMarking);
 router.delete('/deleteMarking/:id', deleteMarking);
 router.get('/markings/:id', getMarkingById);
+router.get('/markingByEnv/:environmentId', getMarkingByEnvironmentId);
 router.put('/:id', updateMarking);
 router.get('/:id', getEnvironmentById);
 router.get('/dashboard/getData', getDashboardData);
 router.post('/origin', addOrigin);
+router.post('/updateMarkingLocation', updateMarkingLocation);
 
 export default router;

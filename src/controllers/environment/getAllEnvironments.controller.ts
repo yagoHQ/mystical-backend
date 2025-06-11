@@ -99,7 +99,6 @@ export const getDashboardData = async (_req: Request, res: Response) => {
       }),
     ]);
 
-    // Manually fetch environment titles for each recent marking
     const recentMarkings = await Promise.all(
       recentMarkingsRaw.map(async (marking) => {
         const env = await prisma.environment.findUnique({
@@ -131,47 +130,110 @@ export const getDashboardData = async (_req: Request, res: Response) => {
 
 export const addOrigin = async (_req: Request, res: Response) => {
   try {
-    const {
-      environmentId,
-      positionX,
-      positionY,
-      positionZ,
-      rotationX,
-      rotationY,
-      rotationZ,
-    } = _req.body;
+    const { environmentId, positionX, positionY, positionZ } = _req.body;
 
     if (
       !environmentId ||
-      !positionX ||
-      !positionY ||
-      !positionZ ||
-      !rotationX ||
-      !rotationY ||
-      !rotationZ
+      positionX === undefined ||
+      positionY === undefined ||
+      positionZ === undefined
     ) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    const updatedEnvironment = await prisma.environment.update({
+    const h = parseFloat(positionX);
+    const k = parseFloat(positionY);
+    const t = parseFloat(positionZ);
+
+    await prisma.environment.update({
       where: { id: environmentId },
       data: {
-        originPosition: [
-          parseFloat(positionX),
-          parseFloat(positionY),
-          parseFloat(positionZ),
-        ],
-        originRotation: [
-          parseFloat(rotationX),
-          parseFloat(rotationY),
-          parseFloat(rotationZ),
-        ],
+        originPosition: [h, k, t],
       },
     });
 
-    res.status(200).json(updatedEnvironment);
+    const markings = await prisma.marking.findMany({
+      where: { environmentId },
+    });
+
+    const updatePromises = markings.map((mark) => {
+      const envX = mark.x - h;
+      const envY = mark.y - k;
+      const envZ = mark.z - t;
+
+      return prisma.marking.update({
+        where: { id: mark.id },
+        data: {
+          envX,
+          envY,
+          envZ,
+        },
+      });
+    });
+
+    await Promise.all(updatePromises);
+
+    res.status(200).json({
+      message: 'Origin shifted and markings updated successfully.',
+    });
   } catch (error) {
-    console.error('[addOrigin]', error);
-    res.status(500).json({ error: 'Failed to update origin in environment' });
+    console.error('[shiftOriginAndUpdateMarkings]', error);
+    res
+      .status(500)
+      .json({ error: 'Failed to shift origin or update markings' });
+  }
+};
+
+export const updateMarkingLocation = async (req: Request, res: Response) => {
+  try {
+    const { markingId, environmentId, envX, envY, envZ } = req.body;
+
+    if (
+      !markingId ||
+      !environmentId ||
+      envX === undefined ||
+      envY === undefined ||
+      envZ === undefined
+    ) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    const relativeX = parseFloat(envX);
+    const relativeY = parseFloat(envY);
+    const relativeZ = parseFloat(envZ);
+
+    const environment = await prisma.environment.findUnique({
+      where: { id: environmentId },
+    });
+
+    if (!environment || !environment.originPosition) {
+      return res
+        .status(404)
+        .json({ error: 'Origin not set for this environment' });
+    }
+
+    const [originX, originY, originZ] = environment.originPosition;
+
+    // Convert from relative (envX/Y/Z) to absolute (x/y/z)
+    const x = originX + relativeX;
+    const y = originY + relativeY;
+    const z = originZ + relativeZ;
+
+    const updatedMarking = await prisma.marking.update({
+      where: { id: markingId },
+      data: {
+        x,
+        y,
+        z,
+        envX: relativeX,
+        envY: relativeY,
+        envZ: relativeZ,
+      },
+    });
+
+    res.status(200).json(updatedMarking);
+  } catch (error) {
+    console.error('[updateMarkingLocation]', error);
+    res.status(500).json({ error: 'Failed to update marking location' });
   }
 };

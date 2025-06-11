@@ -62,22 +62,24 @@ material   String?
 
 
 model Marking {
-  id                  String      @id @default(auto()) @map("_id") @db.ObjectId
-  environment         Environment @relation(fields: [environmentId], references: [id])
-  environmentId       String      @db.ObjectId
-  createdBy           User        @relation(fields: [createdById], references: [id])
-  createdById         String      @db.ObjectId
-  x                   Float
-  y                   Float
-  z                   Float
-  modelMarking        Float[]
-  environmentMarking  Float[]
-  url                 String?
-  metadata            Json?
-  remark              String?
-  comments            Comment[]
-  createdAt           DateTime    @default(now())
+  id            String      @id @default(auto()) @map("_id") @db.ObjectId
+  environment   Environment @relation(fields: [environmentId], references: [id])
+  environmentId String      @db.ObjectId
+  createdBy     User        @relation(fields: [createdById], references: [id])
+  createdById   String      @db.ObjectId
+  x             Float
+  y             Float
+  z             Float
+  envX          Float?      
+  envY          Float?      
+  envZ          Float?      
+  url           String?
+  metadata      Json?
+  remark        String?
+  comments      Comment[]
+  createdAt     DateTime    @default(now())
 }
+
 
 
 model Comment {
