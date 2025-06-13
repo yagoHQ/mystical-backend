@@ -17,20 +17,55 @@ export const createMarking = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    const marking = await prisma.marking.create({
-      data: {
-        x: parseFloat(x),
-        y: parseFloat(y),
-        z: parseFloat(z),
-        environment: { connect: { id: environmentId } },
-        createdBy: { connect: { id: createdById } },
-        remark,
-        metadata,
-        url,
+    const orignPosition = await prisma.environment.findUnique({
+      where: { id: environmentId },
+      select: {
+        originPosition: true,
       },
     });
+    if (!orignPosition) {
+      const marking = await prisma.marking.create({
+        data: {
+          x: parseFloat(x),
+          y: parseFloat(y),
+          z: parseFloat(z),
+          environment: { connect: { id: environmentId } },
+          createdBy: { connect: { id: createdById } },
+          remark,
+          metadata,
+          url,
+        },
+      });
 
-    return res.status(201).json(marking);
+      return res.status(201).json(marking);
+    } else {
+      const { originPosition } = orignPosition;
+
+      const originX = originPosition[0];
+      const originY = originPosition[1];
+      const originZ = originPosition[2];
+      const envX = parseFloat(x) - originX;
+      const envY = parseFloat(y) - originY;
+      const envZ = parseFloat(z) - originZ;
+
+      const marking = await prisma.marking.create({
+        data: {
+          x: parseFloat(x),
+          y: parseFloat(y),
+          z: parseFloat(z),
+          environment: { connect: { id: environmentId } },
+          createdBy: { connect: { id: createdById } },
+          remark,
+          metadata,
+          url,
+          envX,
+          envY,
+          envZ,
+        },
+      });
+
+      return res.status(201).json(marking);
+    }
   } catch (error) {
     console.error('[createMarking]', error);
     return res.status(500).json({ error: 'Failed to add marking' });
