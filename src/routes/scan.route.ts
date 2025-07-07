@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import { upload } from '../middlewares/upload';
-import { uploadScan } from '../controllers/scan/uploadScan.controller';
+import {
+  uploadScan,
+  deleteScan,
+} from '../controllers/scan/uploadScan.controller';
 // import { getScanModelsById } from '../controllers/scan/uploadScan.controller';
 
 const router = Router();
@@ -14,6 +17,7 @@ router.post(
   ]),
   uploadScan
 );
+router.delete('/delete/:id', deleteScan);
 //   router.get('/:id',getScanModelsById);
 
 export default router;

@@ -82,3 +82,22 @@ export const uploadScan = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Failed to upload scan' });
   }
 };
+
+export const deleteScan = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: 'Scan ID is required' });
+    }
+
+    const scan = await prisma.scan.delete({
+      where: { id },
+    });
+
+    return res.status(200).json({ message: 'Scan deleted successfully', scan });
+  } catch (error) {
+    console.error('[deleteScan]', error);
+    return res.status(500).json({ error: 'Failed to delete scan' });
+  }
+};

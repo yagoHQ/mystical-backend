@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   createEnvironment,
   bulkUpdateScans,
+  deleteEnvironment,
 } from '../controllers/environment/createEnvironment.controller';
 import {
   getAllEnvironments,
@@ -27,6 +28,7 @@ router.post('/createEnvironment', upload.single('image'), createEnvironment);
 router.post('/updateScans', bulkUpdateScans);
 router.post('/addMarking', createMarking);
 router.delete('/deleteMarking/:id', deleteMarking);
+router.delete('/delete/:id', deleteEnvironment);
 router.get('/markings/:id', getMarkingById);
 router.get('/markingByEnv/:environmentId', getMarkingByEnvironmentId);
 router.put('/:id', updateMarking);
