@@ -84,24 +84,44 @@ export const deleteEnvironment = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Missing environment ID' });
     }
 
-    // Step 1: Delete all related scans
-    await prisma.scan.deleteMany({
+    // 1. Get all markings for the environment
+    const markings = await prisma.marking.findMany({
       where: { environmentId: id },
+      select: { id: true },
     });
 
-    // Step 2: Delete all related markings
+    const markingIds = markings.map((m) => m.id);
+
+    // 2. Delete comments linked to these markings
+    await prisma.comment.deleteMany({
+      where: {
+        markingId: { in: markingIds },
+      },
+    });
+
+    // 3. Delete markings
     await prisma.marking.deleteMany({
-      where: { environmentId: id },
+      where: {
+        id: { in: markingIds },
+      },
     });
 
-    // Step 3: Delete the environment
+    // 4. Delete scans
+    await prisma.scan.deleteMany({
+      where: {
+        environmentId: id,
+      },
+    });
+
+    // 5. Delete the environment
     const environment = await prisma.environment.delete({
       where: { id },
     });
 
-    return res
-      .status(200)
-      .json({ message: 'Environment and related data deleted', environment });
+    return res.status(200).json({
+      message: 'Environment and all related data deleted',
+      environment,
+    });
   } catch (error) {
     console.error('[deleteEnvironment]', error);
     return res.status(500).json({ error: 'Failed to delete environment' });
