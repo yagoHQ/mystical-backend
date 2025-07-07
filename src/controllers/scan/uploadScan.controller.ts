@@ -54,11 +54,7 @@ export const uploadScan = async (req: Request, res: Response) => {
     });
 
     // 💡 Calculate dynamic position based on count (x = count * 2, y = 0, z = count * 2)
-    const dynamicPosition = [
-      parseFloat(originX) || scanCount * 2,
-      parseFloat(originY) || 0,
-      parseFloat(originZ) || scanCount * 2,
-    ];
+    const dynamicPosition = [scanCount * 2, 0, scanCount * 2];
 
     const scan = await prisma.scan.create({
       data: {
