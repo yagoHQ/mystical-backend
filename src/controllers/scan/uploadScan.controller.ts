@@ -28,7 +28,7 @@ export const uploadScan = async (req: Request, res: Response) => {
     const fileUrl = file.location;
 
     const material = files?.material?.[0];
-    const materialUrl = material?.location || null; // optional
+    const materialUrl = material?.location || null;
 
     const imageUrls: string[] = [];
     if (files.images?.length) {
@@ -48,18 +48,26 @@ export const uploadScan = async (req: Request, res: Response) => {
       }
     }
 
+    // 🧠 Get count of existing scans in the environment
+    const scanCount = await prisma.scan.count({
+      where: { environmentId },
+    });
+
+    // 💡 Calculate dynamic position based on count (x = count * 2, y = 0, z = count * 2)
+    const dynamicPosition = [
+      parseFloat(originX) || scanCount * 2,
+      parseFloat(originY) || 0,
+      parseFloat(originZ) || scanCount * 2,
+    ];
+
     const scan = await prisma.scan.create({
       data: {
         scanName,
         fileUrl,
         material: materialUrl,
         images: imageUrls,
-        textures: textureUrls, // remains empty array if none provided
-        position: [
-          parseFloat(originX) || 0,
-          parseFloat(originY) || 0,
-          parseFloat(originZ) || 0,
-        ],
+        textures: textureUrls,
+        position: dynamicPosition,
         rotation: [0, 0, 0],
         scale: [1, 1, 1],
         environment: {
