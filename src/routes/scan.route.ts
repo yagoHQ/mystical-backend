@@ -11,7 +11,7 @@ router.post(
   '/',
   upload.fields([
     { name: 'file', maxCount: 1 },
-    { name: 'images', maxCount: 120 },
+    { name: 'images', maxCount: 200 },
     { name: 'material', maxCount: 1 },
     { name: 'textures', maxCount: 20000 },
   ]),
