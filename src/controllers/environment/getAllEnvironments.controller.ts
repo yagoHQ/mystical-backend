@@ -130,7 +130,15 @@ export const getDashboardData = async (_req: Request, res: Response) => {
 
 export const addOrigin = async (_req: Request, res: Response) => {
   try {
-    const { environmentId, positionX, positionY, positionZ } = _req.body;
+    const {
+      environmentId,
+      positionX,
+      positionY,
+      positionZ,
+      rotationX,
+      rotationY,
+      rotationZ,
+    } = _req.body;
 
     if (
       !environmentId ||
@@ -145,10 +153,15 @@ export const addOrigin = async (_req: Request, res: Response) => {
     const k = parseFloat(positionY);
     const t = parseFloat(positionZ);
 
+    const rx = parseFloat(rotationX ?? 0);
+    const ry = parseFloat(rotationY ?? 0);
+    const rz = parseFloat(rotationZ ?? 0);
+
     await prisma.environment.update({
       where: { id: environmentId },
       data: {
         originPosition: [h, k, t],
+        originRotation: [rx, ry, rz],
       },
     });
 
